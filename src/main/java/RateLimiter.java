@@ -47,4 +47,8 @@ public class RateLimiter {
         System.out.println("TEST 1: " + test1);
         System.out.println("TEST 1 CACHE: " + this.jedis.get("foo"));   
     }
+
+    public void createUser() {
+        
+    }
 }
