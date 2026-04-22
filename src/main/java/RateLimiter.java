@@ -10,17 +10,19 @@ import dto.RateLimitResponse;
 public class RateLimiter {
     private JedisClientConfig config;
     private UnifiedJedis jedis;
+    private Database db;
 
     public static void main(String[] args) {
         RateLimiter app = new RateLimiter();
         Properties prop = new Properties();
+        app.db = new Database();
         try (FileInputStream fis = new FileInputStream(".env")) {
             prop.load(fis);
             
             String redisUrl = prop.getProperty("REDIS_URL");
             String redisPassword = prop.getProperty("REDIS_PASSWORD");
 
-            System.out.println("REDIS URL: " + redisUrl + "REDIS PASSWORD: " + redisPassword);
+            System.out.println("REDIS URL: " + redisUrl + "\nREDIS PASSWORD: " + redisPassword);
             app.initializeRedis(redisUrl, redisPassword);
             app.testConnection();
         } catch (IOException e) {

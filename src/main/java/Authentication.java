@@ -1,26 +1,35 @@
 import java.util.Random;
 
+import dto.DatabaseResponse;
+import dto.UserDTO;
 import redis.clients.jedis.UnifiedJedis;
 
 public class Authentication {
     private final int API_KEY_LENGTH = 12;
+    
     public static void main(String[] args) {
         // blank ?
     }
 
-    public boolean initializeUser(UnifiedJedis jedis, String username) {
+    public DatabaseResponse initializeUser(UnifiedJedis jedis, Database db, String username, String plan) {
         // Check if user exists 
         String userKey = "username:" + username;
         boolean userExists = jedis.exists(userKey);
+        DatabaseResponse dbResponse = new DatabaseResponse(false, "User never created", new UserDTO(), "");
 
         if (userExists) {
-            return false;
+            return dbResponse;
         } 
 
         // create user with api key
         String apiKey = generateApiKey();
+        System.out.println("API KEY: " + apiKey);
+        // cache user
         jedis.set(userKey, apiKey);
-        return true;
+        // insert user into db
+        dbResponse = db.createUser(username, plan, apiKey);
+
+        return dbResponse;
     }
 
     public String getApiKey(UnifiedJedis jedis, String username) {
